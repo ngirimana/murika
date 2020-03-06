@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import bodyParse from 'body-parser';
 import dotenv from 'dotenv';
 import Config from './config/defaultConfig';
-import userRoute from './routes/user.route'
+import userRoute from './routes/user.route';
 
 
 const app = express();
