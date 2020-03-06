@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import bodyParse from 'body-parser';
 import dotenv from 'dotenv';
 import Config from './config/defaultConfig';
+import userRoute from './routes/user.route'
 
 
 const app = express();
@@ -18,6 +19,7 @@ mongoose
   })
   .then(() => process.stdout.write('DB Connection succesfully\n'));
 app.use(bodyParse.json());
+app.use('/api/v1/auth', userRoute);
 
 const { port } = Config;
 app.listen(port, () => process.stdout.write(`Listening on port ${port} ...\n******************** \n`));
