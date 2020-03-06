@@ -24,7 +24,7 @@
     "@babel/polyfill": "^7.7.0",
     "@babel/preset-env": "^7.7.7",
     "babel-eslint": "^10.0.3",
-    "bcrypt": "^3.0.7",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
