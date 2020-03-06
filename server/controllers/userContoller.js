@@ -16,7 +16,6 @@ export const signUp = async (req, res) => {
     } = req.body;
     password = encryptPassword(password);
     const newUser = await User.create({
-
       firstName,
       lastName,
       phoneNumber,

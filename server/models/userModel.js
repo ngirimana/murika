@@ -25,11 +25,15 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [ validator.isEmail, 'Provide valid email' ],
   },
+  password: {
+    type: String,
+    required: [ true, 'please  provide your  password' ],
+  },
   isAdmin: {
     type: Boolean,
     default: false,
   },
 });
-const UserModel = mongoose.model('UserProfile', userSchema);
+const UserModel = mongoose.model('User', userSchema);
 
 export default UserModel;
