@@ -1,5 +1,5 @@
 import lodash from 'lodash';
-import { encryptPassword } from '../helpers/hashPassword';
+import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
 import { generateAuthToken } from '../helpers/token';
 import User from '../models/userModel';
@@ -16,7 +16,6 @@ export const signUp = async (req, res) => {
     } = req.body;
     password = encryptPassword(password);
     const newUser = await User.create({
-
       firstName,
       lastName,
       phoneNumber,
@@ -45,5 +44,36 @@ export const signUp = async (req, res) => {
     );
   } catch (error) {
     return errorResponse(res, 400, error);
+  }
+};
+export const signIn = async (req, res) => {
+  try {
+    const { userName, password } = req.body;
+    const userLogin = await User.findOne(
+      { $or: [ { email: userName }, { phoneNumber: userName } ] },
+    );
+    if (userLogin && decryptPassword(password, userLogin.password)) {
+      const token = generateAuthToken(
+        userLogin._id,
+        userLogin.isAdmin,
+        userLogin.email,
+      );
+      const data = {
+        token,
+        userData: lodash.pick(
+          userLogin,
+          'id',
+          'userType',
+          'firstName',
+          'lastName',
+          'email',
+        ),
+      };
+
+      return successResponse(res, 200, 'User logged in successfully', data);
+    }
+    return errorResponse(res, 401, 'Incorrect email or password');
+  } catch (error) {
+    return errorResponse(res, 500, error);
   }
 };
