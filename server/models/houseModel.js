@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const houseSchema = new mongoose.Schema({
-  owner: {
+  ownerId: {
     type: String,
     required: true,
   },

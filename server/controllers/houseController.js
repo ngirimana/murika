@@ -24,7 +24,7 @@ export const addHouse = async (req, res) => {
       numberOfRooms,
       category,
     });
-    return successResponse(res, 201, 'job posted successfully', newHouse);
+    return successResponse(res, 201, 'House  posted successfully', newHouse);
   } catch (error) {
     return errorResponse(res, 500, error);
   }
