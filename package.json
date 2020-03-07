@@ -4,7 +4,8 @@
   "description": "from all to all",
   "main": "index.js",
   "scripts": {
-    "server": " nodemon --exec babel-node ./server/index.js"
+    "server": " nodemon --exec babel-node ./server/index.js",
+    "start": "babel-node ./server/index.js"
   },
   "repository": {
     "type": "git",
