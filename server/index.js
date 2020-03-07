@@ -21,6 +21,13 @@ mongoose
 app.use(bodyParse.json());
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1/', houseRoute);
+app.use('/', (req, res) => {
+  res.status(200).send({
+    status: 200,
+    message: 'Welcome To Murika Home Ltd',
+  });
+});
+
 const { port } = Config;
 app.listen(port, () => process.stdout.write(`Listening on port ${port} ...\n******************** \n`));
 export default app;
