@@ -87,3 +87,16 @@ export const rentHouse = async (req, res) => {
     return errorResponse(res, 500, error);
   }
 };
+export const getAllRentedHouse = async (req, res) => {
+  try {
+    const { houseId } = req.params;
+    const oneHouse = await House.findById({ _id: houseId, status: 'rented' });
+    if (oneHouse) {
+      return successResponse(res, 200, 'House retrievved successfull', oneHouse);
+    }
+
+    return errorResponse(res, 404, 'House is not available');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};

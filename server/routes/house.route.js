@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  addHouse, editHouse, findAllHouse, findOneHouse,
+  addHouse, editHouse, findAllHouse, findOneHouse, rentHouse, getAllRentedHouse,
 } from '../controllers/houseController';
 import { verifyAuth } from '../middlewares/authentication';
 
@@ -10,6 +10,6 @@ houseRouter.post('/house', verifyAuth, addHouse);
 houseRouter.patch('/house/:houseId', verifyAuth, editHouse);
 houseRouter.get('/houses/', findAllHouse);
 houseRouter.get('/houses/:houseId', findOneHouse);
-houseRouter.patch('/house/:houseId/checkout', findOneHouse);
-
+houseRouter.patch('/house/:houseId/checkout', verifyAuth, rentHouse);
+houseRouter.patch('/houses/rented', verifyAuth, getAllRentedHouse);
 export default houseRouter;
