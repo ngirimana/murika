@@ -46,3 +46,18 @@ export const editHouse = async (req, res) => {
     return errorResponse(res, 500, err);
   }
 };
+
+
+export const findAllHouse = async (req, res) => {
+  try {
+    const houses = await House.find();
+    if (houses.length) {
+      const sortedHouse = houses.sort((a, b) => (new Date(b.postedDate)).getTime()
+        - (new Date(a.postedDate).getTime()));
+      return successResponse(res, 201, 'Houses retrieved successfully', sortedHouse);
+    }
+    return errorResponse(res, 404, 'Jobs are not available');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
