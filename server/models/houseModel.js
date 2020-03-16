@@ -17,6 +17,10 @@ const houseSchema = new mongoose.Schema({
       type: String,
     },
   },
+  postedDate: {
+    type: Date,
+    default: Date.now(),
+  },
   status: {
     type: String,
     default: 'available',
