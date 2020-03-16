@@ -50,7 +50,7 @@ export const editHouse = async (req, res) => {
 
 export const findAllHouse = async (req, res) => {
   try {
-    const houses = await House.find();
+    const houses = await House.find({ status: 'available' });
     if (houses.length) {
       const sortedHouse = houses.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));
