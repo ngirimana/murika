@@ -29,3 +29,20 @@ export const addHouse = async (req, res) => {
     return errorResponse(res, 500, error);
   }
 };
+export const editHouse = async (req, res) => {
+  try {
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const { houseId } = req.params;
+    const editableHouse = await House.findById(houseId);
+    if (editableHouse.ownerId === userId) {
+      const updatedHouse = await House.findByIdAndUpdate(houseId, req.body, {
+        new: true,
+        runValidators: true,
+      });
+      return successResponse(res, 400, 'House edited successfully', updatedHouse);
+    }
+    return errorResponse(res, 403, "This job post doesn't belong to you");
+  } catch (err) {
+    return errorResponse(res, 500, err);
+  }
+};
