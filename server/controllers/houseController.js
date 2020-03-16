@@ -41,7 +41,7 @@ export const editHouse = async (req, res) => {
       });
       return successResponse(res, 200, 'House edited successfully', updatedHouse);
     }
-    return errorResponse(res, 403, "This job post doesn't belong to you");
+    return errorResponse(res, 403, "This house post doesn't belong to you");
   } catch (err) {
     return errorResponse(res, 500, err);
   }
@@ -56,7 +56,7 @@ export const findAllHouse = async (req, res) => {
         - (new Date(a.postedDate).getTime()));
       return successResponse(res, 201, 'Houses retrieved successfully', sortedHouse);
     }
-    return errorResponse(res, 404, 'Jobs are not available');
+    return errorResponse(res, 404, 'House are not available');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
@@ -70,6 +70,19 @@ export const findOneHouse = async (req, res) => {
     }
 
     return errorResponse(res, 404, 'House is not available');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const rentHouse = async (req, res) => {
+  try {
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const { houseId } = req.params;
+    const SingleHouse = await House.findById({ _id: houseId, status: 'available' });
+    if (SingleHouse) {
+      const rentedHouse = await House.updateOne({ _id: houseId }, { status: 'rented', renterId: userId });
+      return successResponse(res, 200, 'House is rented successfully', rentedHouse);
+    }
   } catch (error) {
     return errorResponse(res, 500, error);
   }
