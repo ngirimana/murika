@@ -39,7 +39,7 @@ export const editHouse = async (req, res) => {
         new: true,
         runValidators: true,
       });
-      return successResponse(res, 400, 'House edited successfully', updatedHouse);
+      return successResponse(res, 200, 'House edited successfully', updatedHouse);
     }
     return errorResponse(res, 403, "This job post doesn't belong to you");
   } catch (err) {
@@ -57,6 +57,19 @@ export const findAllHouse = async (req, res) => {
       return successResponse(res, 201, 'Houses retrieved successfully', sortedHouse);
     }
     return errorResponse(res, 404, 'Jobs are not available');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const findOneHouse = async (req, res) => {
+  try {
+    const { houseId } = req.params;
+    const oneHouse = await House.findById({ _id: houseId, status: 'available' });
+    if (oneHouse) {
+      return successResponse(res, 200, 'House retrievved successfull', oneHouse);
+    }
+
+    return errorResponse(res, 404, 'House is not available');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
