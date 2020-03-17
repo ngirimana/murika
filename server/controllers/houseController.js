@@ -100,3 +100,26 @@ export const getAllRentedHouse = async (req, res) => {
     return errorResponse(res, 500, error);
   }
 };
+
+export const searchHouse = async (req, res) => {
+  try {
+    const { searchParameter } = req.params;
+    const searchResult = await House.find({
+      $or: [
+        { category: { $regex: `.*${searchParameter}.*` } },
+        { 'address.district': { $regex: `.*${searchParameter}.*` } },
+        { 'address.sector': { $regex: `.*${searchParameter}.*` } },
+        { 'address.cell': { $regex: `.*${searchParameter}.*` } },
+        { 'address.village': { $regex: `.*${searchParameter}.*` } },
+
+      ],
+    });
+    if (searchResult.length) {
+      const sortedSearchedHouse = searchResult.sort((a, b) => (new Date(b.postedDate)).getTime()
+        - (new Date(a.postedDate).getTime()));
+      return successResponse(res, 200, 'job successfully retrieved ', sortedSearchedHouse);
+    }
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
