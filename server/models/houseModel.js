@@ -5,6 +5,10 @@ const houseSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  renterId: {
+    type: String,
+    required: false,
+  },
   price: {
     type: Number,
     required: [true, 'Enter price of house'],
