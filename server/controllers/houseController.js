@@ -78,7 +78,7 @@ export const rentHouse = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('x-auth-token'));
     const { houseId } = req.params;
-    const SingleHouse = await House.findById({ _id: houseId, status: 'available' });
+    const SingleHouse = await House.findOne({ _id: houseId, status: 'available' });
     if (SingleHouse) {
       const rentedHouse = await House.updateOne({ _id: houseId }, { status: 'rented', renterId: userId });
       return successResponse(res, 200, 'House is rented successfully', rentedHouse);
@@ -115,7 +115,7 @@ export const searchHouse = async (req, res) => {
 };
 export const getAllRentedHouse = async (req, res) => {
   try {
-    const rentedHouse = await House.findById({ status: 'rented' });
+    const rentedHouse = await House.find({ status: 'rented' });
     if (rentedHouse) {
       return successResponse(res, 200, 'House retrievved successfull', rentedHouse);
     }
@@ -128,7 +128,7 @@ export const getAllRentedHouse = async (req, res) => {
 export const getRentedHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneRentedHouse = await House.findById({ _id: houseId, status: 'rented' });
+    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' });
     if (oneRentedHouse) {
       return successResponse(res, 200, 'House retrieved successfull', oneRentedHouse);
     }

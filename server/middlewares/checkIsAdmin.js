@@ -1,5 +1,5 @@
 import User from '../models/userModel';
-import { userIdFromToken, isAdminFromToken } from '../helpers/token';
+import { userIdFromToken } from '../helpers/token';
 import { errorResponse } from '../helpers/response';
 
 export const verifyIsAdmin = async (req, res, next) => {
@@ -9,14 +9,9 @@ export const verifyIsAdmin = async (req, res, next) => {
   }
   try {
     const userId = userIdFromToken(authToken);
-    const adminUser = isAdminFromToken(authToken);
     const user = await User.findOne({ _id: userId });
-    if (user.isAdmin !== adminUser) {
-      return errorResponse(
-        res,
-        401,
-        'You are not authorized to perform this task',
-      );
+    if (!user.isAdmin) {
+      return errorResponse(res, 401, 'You are not authorized to perform this task');
     }
 
     next();
