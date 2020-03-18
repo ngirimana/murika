@@ -87,20 +87,6 @@ export const rentHouse = async (req, res) => {
     return errorResponse(res, 500, error);
   }
 };
-export const getAllRentedHouse = async (req, res) => {
-  try {
-    const { houseId } = req.params;
-    const oneHouse = await House.findById({ _id: houseId, status: 'rented' });
-    if (oneHouse) {
-      return successResponse(res, 200, 'House retrievved successfull', oneHouse);
-    }
-
-    return errorResponse(res, 404, 'House is not available');
-  } catch (error) {
-    return errorResponse(res, 500, error);
-  }
-};
-
 export const searchHouse = async (req, res) => {
   try {
     const { searchParameter } = req.params;
@@ -123,6 +109,31 @@ export const searchHouse = async (req, res) => {
       };
       return successResponse(res, 200, 'job successfully retrieved ', data);
     }
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const getAllRentedHouse = async (req, res) => {
+  try {
+    const rentedHouse = await House.findById({ status: 'rented' });
+    if (rentedHouse) {
+      return successResponse(res, 200, 'House retrievved successfull', rentedHouse);
+    }
+
+    return errorResponse(res, 404, 'House is not available');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const getRentedHouse = async (req, res) => {
+  try {
+    const { houseId } = req.params;
+    const oneRentedHouse = await House.findById({ _id: houseId, status: 'rented' });
+    if (oneRentedHouse) {
+      return successResponse(res, 200, 'House retrieved successfull', oneRentedHouse);
+    }
+
+    return errorResponse(res, 404, 'House is not available');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
