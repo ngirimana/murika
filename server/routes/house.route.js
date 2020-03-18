@@ -12,5 +12,5 @@ houseRouter.get('/houses/', findAllHouse);
 houseRouter.get('/houses/:houseId', findOneHouse);
 houseRouter.patch('/house/:houseId/checkout', verifyAuth, rentHouse);
 houseRouter.patch('/houses/rented', verifyAuth, getAllRentedHouse);
-houseRouter.get('/houses/search-result', verifyAuth, searchHouse);
+houseRouter.get('/houses/:searchParameter', verifyAuth, searchHouse);
 export default houseRouter;
