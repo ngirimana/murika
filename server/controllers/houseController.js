@@ -1,6 +1,6 @@
 import { errorResponse, successResponse } from '../helpers/response';
 import House from '../models/houseModel';
-import { userIdFromToken } from '../helpers/token';
+import { userIdFromToken, isAdminFromToken } from '../helpers/token';
 
 export const addHouse = async (req, res) => {
   try {
@@ -142,10 +142,11 @@ export const getRentedHouse = async (req, res) => {
 export const deleteHouse = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('x-auth-token'));
+    const isAdmin = isAdminFromToken(req.header('x-auth-token'));
     const { houseId } = req.params;
     const editableHouse = await House.findBy(houseId);
-    if (editableHouse.ownerId === userId) {
-      const deletedHouse = await House.findByIdAndDelete(houseId);
+    if (editableHouse.ownerId === userId || isAdmin) {
+      const deletedHouse = await House.deleteOne({ _id: houseId });
       return successResponse(res, 200, 'House deleted successfully', deletedHouse);
     }
     return errorResponse(res, 403, "This house post doesn't belong to you");

@@ -16,8 +16,8 @@ houseRouter.get('/houses/', findAllHouse);
 houseRouter.get('/houses/:houseId', findOneHouse);
 houseRouter.patch('/house/:houseId/checkout', verifyAuth, rentHouse);
 houseRouter.get('/houses/search-result/:searchParameter', searchHouse);
-houseRouter.get('/rented-houses', verifyIsAdmin, getAllRentedHouse);
-houseRouter.get('/rented-houses/:houseId', verifyIsAdmin, getRentedHouse);
-houseRouter.delete('/house/:houseId', verifyIsAdmin, deleteHouse);
+houseRouter.get('/rented-houses', verifyAuth, verifyIsAdmin, getAllRentedHouse);
+houseRouter.get('/rented-houses/:houseId', verifyAuth, verifyIsAdmin, getRentedHouse);
+houseRouter.delete('/house/:houseId', verifyAuth, deleteHouse);
 
 export default houseRouter;
