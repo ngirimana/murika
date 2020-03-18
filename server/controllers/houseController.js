@@ -138,3 +138,18 @@ export const getRentedHouse = async (req, res) => {
     return errorResponse(res, 500, error);
   }
 };
+
+export const deleteHouse = async (req, res) => {
+  try {
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const { houseId } = req.params;
+    const editableHouse = await House.findBy(houseId);
+    if (editableHouse.ownerId === userId) {
+      const deletedHouse = await House.findByIdAndDelete(houseId);
+      return successResponse(res, 200, 'House deleted successfully', deletedHouse);
+    }
+    return errorResponse(res, 403, "This house post doesn't belong to you");
+  } catch (err) {
+    return errorResponse(res, 500, err);
+  }
+};
