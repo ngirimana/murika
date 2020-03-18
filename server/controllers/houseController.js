@@ -117,7 +117,11 @@ export const searchHouse = async (req, res) => {
     if (searchResult.length) {
       const sortedSearchedHouse = searchResult.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));
-      return successResponse(res, 200, 'job successfully retrieved ', sortedSearchedHouse);
+      const data = {
+        numberOfHouse: sortedSearchedHouse.length,
+        sortedSearchedHouse,
+      };
+      return successResponse(res, 200, 'job successfully retrieved ', data);
     }
   } catch (error) {
     return errorResponse(res, 500, error);
