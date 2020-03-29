@@ -168,3 +168,18 @@ export const HouseIRented = async (req, res) => {
     return errorResponse(res, 500, err);
   }
 };
+export const activateHouse = async (req, res) => {
+  try {
+    const { houseId } = req.params;
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const house = await House.findOne({ _id: houseId, status: 'rented' });
+    if (house && (house.ownerId === userId)) {
+      const acttivatedHouse = await House.updateOne({ _id: houseId },
+        { status: 'available', renterId: null });
+      return successResponse(res, 200, 'House is activated successfully', acttivatedHouse);
+    }
+    return errorResponse(res, 404, 'House is not found');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};

@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   addHouse, editHouse, findAllHouse, findOneHouse, rentHouse, getRentedHouse,
-  searchHouse, getAllRentedHouse, deleteOneHouse, HouseIRented,
+  searchHouse, getAllRentedHouse, deleteOneHouse, HouseIRented, activateHouse,
 } from '../controllers/houseController';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
@@ -18,6 +18,6 @@ houseRouter.get('/rented-houses', verifyAuth, verifyIsAdmin, getAllRentedHouse);
 houseRouter.get('/rented-houses/:houseId', verifyAuth, verifyIsAdmin, getRentedHouse);
 houseRouter.get('/my-rented-houses', verifyAuth, HouseIRented);
 houseRouter.delete('/houses/:houseId', verifyAuth, deleteOneHouse);
-
+houseRouter.patch('/activate-house/:houseId', verifyAuth, activateHouse);
 
 export default houseRouter;
