@@ -118,6 +118,30 @@ export const viewProfile = async (req, res) => {
     }
     return errorResponse(res, 404, 'User Profile is not available');
   } catch (error) {
-    return errorResponse(res, 400, error);
+    return errorResponse(res, 500, error);
+  }
+};
+export const deleteUser = async (req, res) => {
+  try {
+    const { searchId } = req.params;
+    const user = await User.findById(searchId);
+
+    if (user) {
+      const userToDelete = await User.deleteOne({ _id: searchId });
+      return successResponse(res, 200, 'User deleted successfully', userToDelete);
+    }
+    return errorResponse(res, 404, 'User is not found');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const allUser = async (req, res) => {
+  try {
+    const users = await User.find({ __v: 0 });
+    if (users) {
+      return successResponse(res, 200, 'users are found', users);
+    }
+  } catch (error) {
+    return errorResponse(res, 500, error);
   }
 };

@@ -17,6 +17,7 @@ houseRouter.get('/houses/search-result/:searchParameter', searchHouse);
 houseRouter.get('/rented-houses', verifyAuth, verifyIsAdmin, getAllRentedHouse);
 houseRouter.get('/rented-houses/:houseId', verifyAuth, verifyIsAdmin, getRentedHouse);
 houseRouter.get('/my-rented-houses', verifyAuth, HouseIRented);
-houseRouter.delete('/house/:houseId', verifyAuth, deleteOneHouse);
+houseRouter.delete('/houses/:houseId', verifyAuth, deleteOneHouse);
+
 
 export default houseRouter;
