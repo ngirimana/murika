@@ -3,6 +3,7 @@ import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
 import { generateAuthToken, userIdFromToken } from '../helpers/token';
 import User from '../models/userModel';
+import House from '../models/houseModel';
 
 export const signUp = async (req, res) => {
   try {
@@ -94,5 +95,29 @@ export const changePassword = async (req, res) => {
     return errorResponse(res, 400, 'Incorrect oldPassword');
   } catch (error) {
     return errorResponse(res, 500, error);
+  }
+};
+export const viewProfile = async (req, res) => {
+  try {
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userProfile = await User.find({ _id: userId },
+      { password: 0, __v: 0, _id: 0 });
+    if (userProfile.length) {
+      const myHouses = await House.find({ ownerId: userId }, { __v: 0 });
+      if (myHouses.length) {
+        const data = {
+          userProfile,
+          HouseNumber: myHouses.length,
+          myHouses,
+        };
+        return successResponse(
+          res, 200, 'User profile retrieved successfully', data,
+        );
+      }
+      return errorResponse(res, 404, 'You don\'t have House');
+    }
+    return errorResponse(res, 404, 'User Profile is not available');
+  } catch (error) {
+    return errorResponse(res, 400, error);
   }
 };
