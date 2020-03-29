@@ -156,3 +156,15 @@ export const deleteOneHouse = async (req, res) => {
     return errorResponse(res, 500, err);
   }
 };
+export const HouseIRented = async (req, res) => {
+  try {
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const myRentedHouses = await House.find({ renterId: userId, status: 'rented' }, { __v: 0 });
+    if (myRentedHouses.length) {
+      return successResponse(res, 200, 'House that you have rented are available', myRentedHouses);
+    }
+    return errorResponse(res, 404, 'House that you have rented are not available');
+  } catch (err) {
+    return errorResponse(res, 500, err);
+  }
+};
