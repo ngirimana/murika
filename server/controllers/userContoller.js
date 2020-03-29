@@ -67,6 +67,7 @@ export const signIn = async (req, res) => {
           'firstName',
           'lastName',
           'email',
+          'isAdmin',
         ),
       };
 
