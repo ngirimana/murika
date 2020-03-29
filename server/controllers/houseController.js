@@ -33,7 +33,7 @@ export const editHouse = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('x-auth-token'));
     const { houseId } = req.params;
-    const editableHouse = await House.findById(houseId, { __v: 0 });
+    const editableHouse = await House.findById(houseId);
     if (editableHouse.ownerId === userId) {
       const updatedHouse = await House.findByIdAndUpdate(houseId, req.body, {
         new: true,
@@ -50,7 +50,7 @@ export const editHouse = async (req, res) => {
 
 export const findAllHouse = async (req, res) => {
   try {
-    const houses = await House.find({ status: 'available' });
+    const houses = await House.find({ status: 'available' }, { __v: 0 });
     if (houses.length) {
       const sortedHouse = houses.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));
@@ -64,7 +64,7 @@ export const findAllHouse = async (req, res) => {
 export const findOneHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneHouse = await House.findById({ _id: houseId, status: 'available' });
+    const oneHouse = await House.findById({ _id: houseId, status: 'available' }, { __v: 0 });
     if (oneHouse) {
       return successResponse(res, 200, 'House retrievved successfull', oneHouse);
     }
@@ -83,6 +83,7 @@ export const rentHouse = async (req, res) => {
       const rentedHouse = await House.updateOne({ _id: houseId }, { status: 'rented', renterId: userId });
       return successResponse(res, 200, 'House is rented successfully', rentedHouse);
     }
+    return errorResponse(res, 404, 'House is not available');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
@@ -92,7 +93,6 @@ export const searchHouse = async (req, res) => {
     const { searchParameter } = req.params;
     const searchResult = await House.find({
       $or: [
-        { status: { $regex: `.*${searchParameter}.*` } },
         { category: { $regex: `.*${searchParameter}.*` } },
         { 'address.district': { $regex: `.*${searchParameter}.*` } },
         { 'address.sector': { $regex: `.*${searchParameter}.*` } },
@@ -100,7 +100,7 @@ export const searchHouse = async (req, res) => {
         { 'address.village': { $regex: `.*${searchParameter}.*` } },
 
       ],
-    });
+    }, { __v: 0 });
     if (searchResult.length) {
       const sortedSearchedHouse = searchResult.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));
@@ -117,7 +117,7 @@ export const searchHouse = async (req, res) => {
 };
 export const getAllRentedHouse = async (req, res) => {
   try {
-    const rentedHouse = await House.find({ status: 'rented' });
+    const rentedHouse = await House.find({ status: 'rented' }, { __v: 0 });
     if (rentedHouse) {
       return successResponse(res, 200, 'House retrievved successfull', rentedHouse);
     }
@@ -130,7 +130,7 @@ export const getAllRentedHouse = async (req, res) => {
 export const getRentedHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' });
+    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' }, { __v: 0 });
     if (oneRentedHouse) {
       return successResponse(res, 200, 'House retrieved successfull', oneRentedHouse);
     }
