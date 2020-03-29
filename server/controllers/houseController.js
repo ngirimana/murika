@@ -24,7 +24,7 @@ export const addHouse = async (req, res) => {
       numberOfRooms,
       category,
     });
-    return successResponse(res, 201, 'House  posted successfully', newHouse);
+    return successResponse(res, 200, 'House  posted successfully', newHouse);
   } catch (error) {
     return errorResponse(res, 500, error);
   }
@@ -92,6 +92,7 @@ export const searchHouse = async (req, res) => {
     const { searchParameter } = req.params;
     const searchResult = await House.find({
       $or: [
+        { status: { $regex: `.*${searchParameter}.*` } },
         { category: { $regex: `.*${searchParameter}.*` } },
         { 'address.district': { $regex: `.*${searchParameter}.*` } },
         { 'address.sector': { $regex: `.*${searchParameter}.*` } },
@@ -107,8 +108,9 @@ export const searchHouse = async (req, res) => {
         numberOfHouse: sortedSearchedHouse.length,
         sortedSearchedHouse,
       };
-      return successResponse(res, 200, 'job successfully retrieved ', data);
+      return successResponse(res, 200, 'House successfully retrieved ', data);
     }
+    return errorResponse(res, 404, 'There is not any ressult ');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
@@ -139,13 +141,13 @@ export const getRentedHouse = async (req, res) => {
   }
 };
 
-export const deleteHouse = async (req, res) => {
+export const deleteOneHouse = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('x-auth-token'));
     const isAdmin = isAdminFromToken(req.header('x-auth-token'));
     const { houseId } = req.params;
-    const editableHouse = await House.findBy(houseId);
-    if (editableHouse.ownerId === userId || isAdmin) {
+    const deletableHouse = await House.findById(houseId);
+    if ((deletableHouse.ownerId === userId) || isAdmin) {
       const deletedHouse = await House.deleteOne({ _id: houseId });
       return successResponse(res, 200, 'House deleted successfully', deletedHouse);
     }

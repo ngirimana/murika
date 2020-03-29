@@ -3,7 +3,7 @@ import {
   addHouse, editHouse, findAllHouse, findOneHouse, rentHouse, getRentedHouse,
   searchHouse,
   getAllRentedHouse,
-  deleteHouse,
+  deleteOneHouse,
 } from '../controllers/houseController';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
@@ -18,6 +18,6 @@ houseRouter.patch('/house/:houseId/checkout', verifyAuth, rentHouse);
 houseRouter.get('/houses/search-result/:searchParameter', searchHouse);
 houseRouter.get('/rented-houses', verifyAuth, verifyIsAdmin, getAllRentedHouse);
 houseRouter.get('/rented-houses/:houseId', verifyAuth, verifyIsAdmin, getRentedHouse);
-houseRouter.delete('/house/:houseId', verifyAuth, deleteHouse);
+houseRouter.delete('/house/:houseId', verifyAuth, deleteOneHouse);
 
 export default houseRouter;

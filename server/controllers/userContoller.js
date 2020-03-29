@@ -1,7 +1,7 @@
 import lodash from 'lodash';
 import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
-import { generateAuthToken } from '../helpers/token';
+import { generateAuthToken, userIdFromToken } from '../helpers/token';
 import User from '../models/userModel';
 
 export const signUp = async (req, res) => {
@@ -74,6 +74,24 @@ export const signIn = async (req, res) => {
       return successResponse(res, 200, 'User logged in successfully', data);
     }
     return errorResponse(res, 401, 'Incorrect email or password');
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword, confirmPass } = req.body;
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const user = await User.findById(userId);
+    if ((newPassword === confirmPass) && (decryptPassword(oldPassword, user.password))) {
+      const hashed = encryptPassword(newPassword);
+      const newUser = await User.updateOne({ _id: userId },
+        { $set: { password: hashed } });
+      return successResponse(
+        res, 200, 'password changed successfully', newUser,
+      );
+    }
+    return errorResponse(res, 400, 'Incorrect oldPassword');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
