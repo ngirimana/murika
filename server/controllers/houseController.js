@@ -79,7 +79,7 @@ export const rentHouse = async (req, res) => {
     const userId = userIdFromToken(req.header('x-auth-token'));
     const { houseId } = req.params;
     const SingleHouse = await House.findOne({ _id: houseId, status: 'available' });
-    if (SingleHouse) {
+    if (SingleHouse && (SingleHouse.ownerId !== userId)) {
       const rentedHouse = await House.updateOne({ _id: houseId }, { status: 'rented', renterId: userId });
       return successResponse(res, 200, 'House is rented successfully', rentedHouse);
     }
