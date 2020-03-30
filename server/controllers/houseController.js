@@ -24,7 +24,7 @@ export const addHouse = async (req, res) => {
       numberOfRooms,
       category,
     });
-    return successResponse(res, 201, 'House  posted successfully', newHouse);
+    return successResponse(res, 200, 'House  posted successfully', newHouse);
   } catch (error) {
     return errorResponse(res, 500, error);
   }
@@ -50,7 +50,7 @@ export const editHouse = async (req, res) => {
 
 export const findAllHouse = async (req, res) => {
   try {
-    const houses = await House.find({ status: 'available' });
+    const houses = await House.find({ status: 'available' }, { __v: 0 });
     if (houses.length) {
       const sortedHouse = houses.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));
@@ -64,7 +64,7 @@ export const findAllHouse = async (req, res) => {
 export const findOneHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneHouse = await House.findById({ _id: houseId, status: 'available' });
+    const oneHouse = await House.findById({ _id: houseId, status: 'available' }, { __v: 0 });
     if (oneHouse) {
       return successResponse(res, 200, 'House retrievved successfull', oneHouse);
     }
@@ -79,10 +79,11 @@ export const rentHouse = async (req, res) => {
     const userId = userIdFromToken(req.header('x-auth-token'));
     const { houseId } = req.params;
     const SingleHouse = await House.findOne({ _id: houseId, status: 'available' });
-    if (SingleHouse) {
+    if (SingleHouse && (SingleHouse.ownerId !== userId)) {
       const rentedHouse = await House.updateOne({ _id: houseId }, { status: 'rented', renterId: userId });
       return successResponse(res, 200, 'House is rented successfully', rentedHouse);
     }
+    return errorResponse(res, 404, 'House is not available');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
@@ -99,7 +100,7 @@ export const searchHouse = async (req, res) => {
         { 'address.village': { $regex: `.*${searchParameter}.*` } },
 
       ],
-    });
+    }, { __v: 0 });
     if (searchResult.length) {
       const sortedSearchedHouse = searchResult.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));
@@ -107,15 +108,16 @@ export const searchHouse = async (req, res) => {
         numberOfHouse: sortedSearchedHouse.length,
         sortedSearchedHouse,
       };
-      return successResponse(res, 200, 'job successfully retrieved ', data);
+      return successResponse(res, 200, 'House successfully retrieved ', data);
     }
+    return errorResponse(res, 404, 'There is not any ressult ');
   } catch (error) {
     return errorResponse(res, 500, error);
   }
 };
 export const getAllRentedHouse = async (req, res) => {
   try {
-    const rentedHouse = await House.find({ status: 'rented' });
+    const rentedHouse = await House.find({ status: 'rented' }, { __v: 0 });
     if (rentedHouse) {
       return successResponse(res, 200, 'House retrievved successfull', rentedHouse);
     }
@@ -128,7 +130,7 @@ export const getAllRentedHouse = async (req, res) => {
 export const getRentedHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' });
+    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' }, { __v: 0 });
     if (oneRentedHouse) {
       return successResponse(res, 200, 'House retrieved successfull', oneRentedHouse);
     }
@@ -139,18 +141,45 @@ export const getRentedHouse = async (req, res) => {
   }
 };
 
-export const deleteHouse = async (req, res) => {
+export const deleteOneHouse = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('x-auth-token'));
     const isAdmin = isAdminFromToken(req.header('x-auth-token'));
     const { houseId } = req.params;
-    const editableHouse = await House.findBy(houseId);
-    if (editableHouse.ownerId === userId || isAdmin) {
+    const deletableHouse = await House.findById(houseId);
+    if ((deletableHouse.ownerId === userId) || isAdmin) {
       const deletedHouse = await House.deleteOne({ _id: houseId });
       return successResponse(res, 200, 'House deleted successfully', deletedHouse);
     }
     return errorResponse(res, 403, "This house post doesn't belong to you");
   } catch (err) {
     return errorResponse(res, 500, err);
+  }
+};
+export const HouseIRented = async (req, res) => {
+  try {
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const myRentedHouses = await House.find({ renterId: userId, status: 'rented' }, { __v: 0 });
+    if (myRentedHouses.length) {
+      return successResponse(res, 200, 'House that you have rented are available', myRentedHouses);
+    }
+    return errorResponse(res, 404, 'House that you have rented are not available');
+  } catch (err) {
+    return errorResponse(res, 500, err);
+  }
+};
+export const activateHouse = async (req, res) => {
+  try {
+    const { houseId } = req.params;
+    const userId = userIdFromToken(req.header('x-auth-token'));
+    const house = await House.findOne({ _id: houseId, status: 'rented' });
+    if (house && (house.ownerId === userId)) {
+      const acttivatedHouse = await House.updateOne({ _id: houseId },
+        { status: 'available', renterId: null });
+      return successResponse(res, 200, 'House is activated successfully', acttivatedHouse);
+    }
+    return errorResponse(res, 404, 'House is not found');
+  } catch (error) {
+    return errorResponse(res, 500, error);
   }
 };
