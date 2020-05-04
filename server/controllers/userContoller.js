@@ -29,20 +29,20 @@ export const signUp = async (req, res) => {
       newUser.isAdmin,
       newUser.email,
     );
-    const data = {
-      token,
-      userData: lodash.pick(
-        newUser,
-        'id',
-        'firstName',
-        'lastName',
-        'email',
-        'isAdmin',
-      ),
-    };
-    successResponse(
-      res, 201, 'User created successfully', data,
+    const data = lodash.pick(
+      newUser,
+      'id',
+      'firstName',
+      'lastName',
+      'email',
+      'isAdmin',
     );
+    return res.status(201).json({
+      status: 201,
+      message: 'User created successfully',
+      token,
+      data,
+    });
   } catch (error) {
     return errorResponse(res, 400, error);
   }
@@ -59,20 +59,22 @@ export const signIn = async (req, res) => {
         userLogin.isAdmin,
         userLogin.email,
       );
-      const data = {
+      const data = lodash.pick(
+        userLogin,
+        'id',
+        'userType',
+        'firstName',
+        'lastName',
+        'phoneNumber',
+        'email',
+        'isAdmin',
+      );
+      return res.status(200).json({
+        status: 200,
+        message: 'User logged in successfully',
         token,
-        userData: lodash.pick(
-          userLogin,
-          'id',
-          'userType',
-          'firstName',
-          'lastName',
-          'email',
-          'isAdmin',
-        ),
-      };
-
-      return successResponse(res, 200, 'User logged in successfully', data);
+        data,
+      });
     }
     return errorResponse(res, 401, 'Incorrect email or password');
   } catch (error) {
