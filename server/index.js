@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParse from 'body-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import Config from './config/defaultConfig';
 import userRoute from './routes/user.route';
@@ -18,6 +19,7 @@ mongoose
     useFindAndModify: false,
   })
   .then(() => process.stdout.write('DB Connection succesfully\n'));
+app.use(cors);
 app.use(bodyParse.json());
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1/', houseRoute);
