@@ -8,22 +8,35 @@ export const addHouse = async (req, res) => {
     let {
       ownerId,
       price,
-      contact,
+      phone,
+      email,
       status,
-      address,
+      district,
+      sector,
+      cell,
+      village,
       numberOfRooms,
       category,
+      houseImages,
     } = req.body;
     ownerId = userId;
+    houseImages = req.file.path;
     const newHouse = await House.create({
       ownerId,
       price,
-      contact,
+      phone,
+      email,
       status,
-      address,
+      district,
+      sector,
+      cell,
+      village,
       numberOfRooms,
       category,
+      houseImages,
     });
+
+    houseImages = req.file.path;
     return successResponse(res, 200, 'House  posted successfully', newHouse);
   } catch (error) {
     return errorResponse(res, 500, error);

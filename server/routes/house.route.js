@@ -5,10 +5,11 @@ import {
 } from '../controllers/houseController';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
+import upload from '../middlewares/upload';
 
 const houseRouter = express.Router();
 
-houseRouter.post('/house', verifyAuth, addHouse);
+houseRouter.post('/house', verifyAuth, upload, addHouse);
 houseRouter.patch('/house/:houseId', verifyAuth, editHouse);
 houseRouter.get('/houses/', findAllHouse);
 houseRouter.get('/houses/:houseId', findOneHouse);

@@ -13,13 +13,11 @@ const houseSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Enter price of house'],
   },
-  contact: {
-    phone: {
-      type: String,
-    },
-    email: {
-      type: String,
-    },
+  phone: {
+    type: String,
+  },
+  email: {
+    type: String,
   },
   postedDate: {
     type: Date,
@@ -29,24 +27,24 @@ const houseSchema = new mongoose.Schema({
     type: String,
     default: 'available',
   },
-  address: {
-    district: {
-      type: String,
-      required: [true, 'Enter district of your house'],
-    },
-    sector: {
-      type: String,
-      required: [true, 'Enter sector of your house'],
-    },
-    cell: {
-      type: String,
-      required: [true, 'Enter cell of your house'],
-    },
-    village: {
-      type: String,
-      required: [true, 'Enter village of your house'],
-    },
+
+  district: {
+    type: String,
+    required: [true, 'Enter district of your house'],
   },
+  sector: {
+    type: String,
+    required: [true, 'Enter sector of your house'],
+  },
+  cell: {
+    type: String,
+    required: [true, 'Enter cell of your house'],
+  },
+  village: {
+    type: String,
+    required: [true, 'Enter village of your house'],
+  },
+
   numberOfRooms: {
     type: Number,
     required: [true, 'Enter number of rooms of your house'],
@@ -54,6 +52,10 @@ const houseSchema = new mongoose.Schema({
   category: {
     type: String,
     default: 'cheap',
+  },
+  houseImages: {
+    type: String,
+    required: true,
   },
 });
 const houseModel = mongoose.model('House', houseSchema);
