@@ -20,7 +20,9 @@ mongoose
   })
   .then(() => process.stdout.write('DB Connection succesfully\n'));
 app.use(cors());
+app.use(bodyParse.urlencoded({ extended: true }));
 app.use(bodyParse.json());
+app.use('/api/v1/uploads', express.static('uploads'));
 app.use('/api/v1/auth', userRoute);
 app.use('/api/v1/', houseRoute);
 app.use('/', (req, res) => {
