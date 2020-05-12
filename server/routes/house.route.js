@@ -1,11 +1,12 @@
 import express from 'express';
+import fs from 'fs';
 import {
   addHouse, editHouse, findAllHouse, findOneHouse, rentHouse, getRentedHouse,
   searchHouse, getAllRentedHouse, deleteOneHouse, HouseIRented, activateHouse,
 } from '../controllers/houseController';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
-import upload from '../middlewares/upload';
+import upload from '../middlewares/multer';
 
 const houseRouter = express.Router();
 

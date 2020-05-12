@@ -54,7 +54,7 @@ const houseSchema = new mongoose.Schema({
     default: 'cheap',
   },
   houseImages: {
-    type: String,
+    type: Array,
     required: true,
   },
 });

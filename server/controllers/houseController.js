@@ -1,6 +1,7 @@
 import { errorResponse, successResponse } from '../helpers/response';
 import House from '../models/houseModel';
 import { userIdFromToken, isAdminFromToken } from '../helpers/token';
+import upload from '../middlewares/uploads';
 
 export const addHouse = async (req, res) => {
   try {
@@ -20,7 +21,7 @@ export const addHouse = async (req, res) => {
       houseImages,
     } = req.body;
     ownerId = userId;
-    houseImages = req.file.path;
+    houseImages = await upload(req);
     const newHouse = await House.create({
       ownerId,
       price,
@@ -35,8 +36,6 @@ export const addHouse = async (req, res) => {
       category,
       houseImages,
     });
-
-    houseImages = req.file.path;
     return successResponse(res, 200, 'House  posted successfully', newHouse);
   } catch (error) {
     return errorResponse(res, 500, error);
