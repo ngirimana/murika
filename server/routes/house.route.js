@@ -1,5 +1,4 @@
 import express from 'express';
-import fs from 'fs';
 import {
   addHouse, editHouse, findAllHouse, findOneHouse, rentHouse, getRentedHouse,
   searchHouse, getAllRentedHouse, deleteOneHouse, HouseIRented, activateHouse,
