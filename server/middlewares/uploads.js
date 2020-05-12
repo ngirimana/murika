@@ -13,6 +13,7 @@ const upload = async (req) => {
       urls.push(newPath);
       fs.unlinkSync(path);
     }
+    console.log('upload --------------------------------------',urls)
     return urls;
   }
 };
