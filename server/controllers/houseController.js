@@ -21,7 +21,7 @@ export const addHouse = async (req, res) => {
       houseImages,
     } = req.body;
     ownerId = userId;
-    console.log('upload --------------------------------------',ownerId)
+    console.log('upload --------------------------------------', ownerId);
     houseImages = await upload(req);
     const newHouse = await House.create({
       ownerId,
@@ -37,7 +37,7 @@ export const addHouse = async (req, res) => {
       category,
       houseImages,
     });
-    console.log('upload --------------------------------------',houseImages)
+    console.log('upload --------------------------------------', houseImages);
     return successResponse(res, 200, 'House  posted successfully', newHouse);
   } catch (error) {
     return errorResponse(res, 500, error);
