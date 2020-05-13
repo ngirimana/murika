@@ -11,9 +11,8 @@ const upload = async (req) => {
       const { path } = file;
       const newPath = await uploader(path);
       urls.push(newPath);
-      fs.unlinkSync(path);
+      fs.unlinkSync(file.path);
     }
-    console.log('upload --------------------------------------',urls)
     return urls;
   }
 };
