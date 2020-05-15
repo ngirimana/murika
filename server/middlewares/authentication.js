@@ -3,7 +3,7 @@ import { userIdFromToken } from '../helpers/token';
 import { errorResponse } from '../helpers/response';
 
 export const verifyAuth = async (req, res, next) => {
-  const authToken = req.header('x-auth-token');
+  const authToken = req.header('Authorization');
   if (!authToken) {
     return errorResponse(res, 400, "You haven't provide your token");
   }
