@@ -5,7 +5,7 @@ import upload from '../middlewares/uploads';
 
 export const addHouse = async (req, res) => {
   try {
-    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
     let {
       ownerId,
       price,
@@ -43,7 +43,7 @@ export const addHouse = async (req, res) => {
 };
 export const editHouse = async (req, res) => {
   try {
-    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
     const { houseId } = req.params;
     const editableHouse = await House.findById(houseId);
     if (editableHouse.ownerId === userId) {
@@ -88,7 +88,7 @@ export const findOneHouse = async (req, res) => {
 };
 export const rentHouse = async (req, res) => {
   try {
-    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
     const { houseId } = req.params;
     const SingleHouse = await House.findOne({ _id: houseId, status: 'available' });
     if (SingleHouse && (SingleHouse.ownerId !== userId)) {
@@ -155,8 +155,8 @@ export const getRentedHouse = async (req, res) => {
 
 export const deleteOneHouse = async (req, res) => {
   try {
-    const userId = userIdFromToken(req.header('x-auth-token'));
-    const isAdmin = isAdminFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
+    const isAdmin = isAdminFromToken(req.header('Authorization'));
     const { houseId } = req.params;
     const deletableHouse = await House.findById(houseId);
     if ((deletableHouse.ownerId === userId) || isAdmin) {
@@ -170,7 +170,7 @@ export const deleteOneHouse = async (req, res) => {
 };
 export const HouseIRented = async (req, res) => {
   try {
-    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
     const myRentedHouses = await House.find({ renterId: userId, status: 'rented' }, { __v: 0 });
     if (myRentedHouses.length) {
       return successResponse(res, 200, 'House that you have rented are available', myRentedHouses);
@@ -183,7 +183,7 @@ export const HouseIRented = async (req, res) => {
 export const activateHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
     const house = await House.findOne({ _id: houseId, status: 'rented' });
     if (house && (house.ownerId === userId)) {
       const acttivatedHouse = await House.updateOne({ _id: houseId },

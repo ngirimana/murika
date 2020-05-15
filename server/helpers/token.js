@@ -9,7 +9,7 @@ export const generateAuthToken = (id, isadmin, email) => {
     isAdmin: isadmin,
     userEmail: email,
   },
-  process.env.SECRETEKEY, { expiresIn: '1d' });
+  process.env.SECRETEKEY, { expiresIn: '1h' });
   return token;
 };
 export const userIdFromToken = (token) => {

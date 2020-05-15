@@ -84,7 +84,7 @@ export const signIn = async (req, res) => {
 export const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword, confirmPass } = req.body;
-    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
     const user = await User.findById(userId);
     if ((newPassword === confirmPass) && (decryptPassword(oldPassword, user.password))) {
       const hashed = encryptPassword(newPassword);
@@ -101,7 +101,7 @@ export const changePassword = async (req, res) => {
 };
 export const viewProfile = async (req, res) => {
   try {
-    const userId = userIdFromToken(req.header('x-auth-token'));
+    const userId = userIdFromToken(req.header('Authorization'));
     const userProfile = await User.find({ _id: userId },
       { password: 0, __v: 0, _id: 0 });
     if (userProfile.length) {
