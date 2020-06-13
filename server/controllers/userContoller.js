@@ -14,6 +14,7 @@ export const signUp = async (req, res) => {
       email,
       password,
       isAdmin,
+      userType,
     } = req.body;
     password = encryptPassword(password);
     const newUser = await User.create({
@@ -23,6 +24,7 @@ export const signUp = async (req, res) => {
       email,
       password,
       isAdmin,
+      userType,
     });
     const token = generateAuthToken(
       newUser._id,
@@ -35,7 +37,9 @@ export const signUp = async (req, res) => {
       'firstName',
       'lastName',
       'email',
+      'phoneNumber',
       'isAdmin',
+      'userType',
     );
     return res.status(201).json({
       status: 201,
@@ -68,6 +72,7 @@ export const signIn = async (req, res) => {
         'phoneNumber',
         'email',
         'isAdmin',
+        'userType',
       );
       return res.status(200).json({
         status: 200,
