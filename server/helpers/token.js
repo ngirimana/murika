@@ -14,11 +14,9 @@ export const generateAuthToken = (id, isadmin, email) => {
 };
 export const userIdFromToken = (token) => {
   const mytoken = jwt.verify(token, process.env.SECRETEKEY);
-
   return mytoken.Id;
 };
 export const isAdminFromToken = (token) => {
   const admin = jwt.verify(token, process.env.SECRETEKEY);
-
   return admin.isAdmin;
 };
