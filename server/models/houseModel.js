@@ -12,121 +12,137 @@ const houseSchema = new mongoose.Schema({
     required: false,
   },
   // 3
-  houseType: {
+  propertyType: {
     type: String,
     required: [ true, 'Enter house type' ],
   },
   // 4
-  numberOfRooms: {
+  propertyUses: {
+    type: String,
+    required: true,
+  },
+  // 5
+  rooms: {
     type: Number,
     required: [ true, 'Enter number of rooms of your house' ],
   },
-  // 5
-  bedRoomsNumber: {
+  // 6
+  bedRooms: {
     type: Number,
     required: [ true, 'Enter number of bedrooms of your house' ],
   },
-  // 6
-  bathRoomsNumber: {
+  // 7
+  bathRooms: {
     type: Number,
     required: [ true, 'Enter number of bathrooms of your house' ],
   },
-  // 7
+  // 8
   area: {
     type: Number,
-  },
-  // 8
-  dimensions: {
-    type: String,
+    required: true,
   },
   // 9
+  dimensions: {
+    type: String,
+    required: true,
+  },
+  // 10
   monthlyRent: {
     type: Number,
     required: [ true, 'Enter price of house' ],
   },
-  // 10
+  // 11
   minimumRentperiod: {
     type: Number,
     required: [ true, 'Enter minimum rent period' ],
   },
-  // 11
-  district: {
-    type: String,
-    required: [ true, 'Enter district of your house' ],
-  },
   // 12
-  sector: {
-    type: String,
-    required: [ true, 'Enter sector of your house' ],
-  },
-  // 13
-  cell: {
-    type: String,
-    required: [ true, 'Enter cell of your house' ],
-  },
-  // 14
-  village: {
-    type: String,
-    required: [ true, 'Enter village of your house' ],
-  },
-  // 15
-  about: {
-    type: String,
-  },
-  // 16
-  leaseDatails: {
-    type: String,
-  },
-  // 17
-  fistName: {
-    type: String,
-    required: true,
-  },
-  // 18
-  lastName: {
-    type: String,
-    required: true,
-  },
-  // 19
-  phone: {
-    type: String,
-  },
-  // 20
-  email: {
-    type: String,
-  },
-  // 21
-  postedDate: {
-    type: Date,
-    default: Date.now(),
-  },
-  // 22
-  uses: {
-    type: String,
-    required: true,
-  },
   priceStatus: {
     type: String,
     required: true,
   },
-  parking: {
-    type: Boolean,
-  },
-  gated: {
-    type: Boolean,
-  },
-  pets: {
-    type: Boolean,
-  },
+  // 13
   province: {
     type: String,
     required: true,
   },
+  // 14
+  district: {
+    type: String,
+    required: [ true, 'Enter district of your house' ],
+  },
+  // 15
+  sector: {
+    type: String,
+    required: [ true, 'Enter sector of your house' ],
+  },
+  // 16
+  cell: {
+    type: String,
+    required: [ true, 'Enter cell of your house' ],
+  },
+  // 17
+  village: {
+    type: String,
+    required: [ true, 'Enter village of your house' ],
+  },
+  // 18
+  aboutProperty: {
+    type: String,
+  },
+  // 19
+  leaseDatails: {
+    type: String,
+  },
+  // 20
+  fistName: {
+    type: String,
+    required: true,
+  },
+  // 21
+  lastName: {
+    type: String,
+    required: true,
+  },
+  // 22
+  phone: {
+    type: String,
+  },
+  // 23
+  email: {
+    type: String,
+  },
+  // 24
+  postedDate: {
+    type: Date,
+    default: Date.now(),
+  },
+  // 25
+  parking: {
+    type: Boolean,
+  },
+  // 26
+  gated: {
+    type: Boolean,
+  },
+  // 27
+  pets: {
+    type: Boolean,
+  },
+  // 28
+  furnished: {
+    type: Boolean,
+  },
+  // 29
   status: {
     type: String,
     default: 'available',
   },
-  // 23
+  // 29
+  houseVideo: {
+    type: Array,
+  },
+  // 30
   houseImages: {
     type: Array,
     required: true,
