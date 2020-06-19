@@ -11,13 +11,12 @@ const app = express();
 
 dotenv.config({ path: './.env' });
 
-mongoose
-  .connect(process.env.DATABASE, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  })
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+})
   .then(() => process.stdout.write('DB Connection succesfully\n'));
 app.use(cors());
 app.use(bodyParse.urlencoded({ extended: true }));
