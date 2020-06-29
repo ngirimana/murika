@@ -30,6 +30,9 @@ export const signUp = async (req, res) => {
       newUser._id,
       newUser.isAdmin,
       newUser.email,
+      newUser.firstName,
+      newUser.lastName,
+      newUser.phoneNumber,
     );
     const data = lodash.pick(
       newUser,
@@ -62,6 +65,9 @@ export const signIn = async (req, res) => {
         userLogin._id,
         userLogin.isAdmin,
         userLogin.email,
+        userLogin.firstName,
+        userLogin.lastName,
+        userLogin.phoneNumber,
       );
       const data = lodash.pick(
         userLogin,
