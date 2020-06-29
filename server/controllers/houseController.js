@@ -1,6 +1,8 @@
 import { errorResponse, successResponse } from '../helpers/response';
 import House from '../models/houseModel';
-import { userIdFromToken, isAdminFromToken } from '../helpers/token';
+import {
+  userIdFromToken, isAdminFromToken, emailFromToken, fullNameFromToken, phoneFromToken,
+} from '../helpers/token';
 import upload from '../middlewares/uploads';
 
 export const addHouse = async (req, res) => {
@@ -10,6 +12,9 @@ export const addHouse = async (req, res) => {
       ownerId,
       propertyType,
       rooms,
+      bedRooms,
+      bathRooms,
+      size,
       monthlyRent,
       minimumRentperiod,
       priceStatus,
@@ -30,10 +35,16 @@ export const addHouse = async (req, res) => {
     } = req.body;
     ownerId = userId;
     houseImages = await upload(req);
+    fullName = fullNameFromToken(req.header('Authorization'));
+    email = emailFromToken(req.header('Authorization'));
+    phone = phoneFromToken(req.header('Authorization'));
     const newHouse = await House.create({
       ownerId,
       propertyType,
       rooms,
+      bedRooms,
+      bathRooms,
+      size,
       monthlyRent,
       minimumRentperiod,
       priceStatus,
@@ -121,10 +132,10 @@ export const searchHouse = async (req, res) => {
     const { searchParameter } = req.params;
     const searchResult = await House.find({
       $or: [
-        { category: { $regex: `.* ${searchParameter}.*` } },
-        { 'address.district': { $regex: `.*${searchParameter}.*` } },
-        { 'address.sector': { $regex: `.*${searchParameter}.*` } },
-        { 'address.cell': { $regex: `.*${searchParameter}.*` } },
+        { category: { $regex: `.* ${ searchParameter }.*` } },
+        { 'address.district': { $regex: `.*${ searchParameter }.*` } },
+        { 'address.sector': { $regex: `.*${ searchParameter }.*` } },
+        { 'address.cell': { $regex: `.*${ searchParameter }.*` } },
 
       ],
     }, { __v: 0 });

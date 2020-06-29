@@ -21,6 +21,17 @@ const houseSchema = new mongoose.Schema({
     type: Number,
     required: [ true, 'Enter number of rooms of your house' ],
   },
+  bedRooms: {
+    type: Number,
+    required: [ true, 'Enter number of bedrooms of your house' ],
+  },
+  bathRooms: {
+    type: Number,
+    required: [ true, 'Enter number of bedrooms of your house' ],
+  },
+  size: {
+    type: String,
+  },
   // 5
   monthlyRent: {
     type: Number,
