@@ -146,7 +146,8 @@ export const searchHouse = async (req, res) => {
 };
 export const getAllRentedHouse = async (req, res) => {
   try {
-    const rentedHouse = await House.find({ status: 'rented' }, { __v: 0 });
+    const rentedHouse = await House.find({ status: 'rented' }, { __v: 0 })
+      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
     if (rentedHouse) {
       return successResponse(res, 200, 'House retrievved successfull', rentedHouse);
     }
@@ -159,7 +160,8 @@ export const getAllRentedHouse = async (req, res) => {
 export const getRentedHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' }, { __v: 0 });
+    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' }, { __v: 0 })
+      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
     if (oneRentedHouse) {
       return successResponse(res, 200, 'House retrieved successfull', oneRentedHouse);
     }
@@ -188,7 +190,8 @@ export const deleteOneHouse = async (req, res) => {
 export const HouseIRented = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('Authorization'));
-    const myRentedHouses = await House.find({ renterId: userId, status: 'rented' }, { __v: 0 });
+    const myRentedHouses = await House.find({ renterId: userId, status: 'rented' }, { __v: 0 })
+      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
     if (myRentedHouses.length) {
       return successResponse(res, 200, 'House that you have rented are available', myRentedHouses);
     }
