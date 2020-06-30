@@ -1,7 +1,8 @@
 import express from 'express';
 import {
   addHouse, editHouse, findAllHouse, findOneHouse, rentHouse, getRentedHouse,
-  searchHouse, getAllRentedHouse, deleteOneHouse, HouseIRented, activateHouse,
+  searchHouse, getAllRentedHouse, deleteOneHouse, HouseIRented,
+  activateHouse, cheapHouse, mediumHouse, highLevelHouse,
 } from '../controllers/houseController';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
@@ -11,7 +12,10 @@ const houseRouter = express.Router();
 
 houseRouter.post('/house', verifyAuth, upload, addHouse);
 houseRouter.patch('/house/:houseId', verifyAuth, editHouse);
-houseRouter.get('/houses/', findAllHouse);
+houseRouter.get('/houses', findAllHouse);
+houseRouter.get('/houses/cheap-houses', cheapHouse);
+houseRouter.get('/houses/medium-houses', mediumHouse);
+houseRouter.get('/houses/high-level-houses', highLevelHouse);
 houseRouter.get('/houses/:houseId', findOneHouse);
 houseRouter.patch('/house/:houseId/checkout', verifyAuth, rentHouse);
 houseRouter.get('/houses/search-result/:searchParameter', searchHouse);

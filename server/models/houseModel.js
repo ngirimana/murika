@@ -2,10 +2,7 @@ import mongoose from 'mongoose';
 
 const houseSchema = new mongoose.Schema({
   // 1
-  ownerId: {
-    type: String,
-    required: true,
-  },
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   // 2
   renterId: {
     type: String,
@@ -69,21 +66,6 @@ const houseSchema = new mongoose.Schema({
   cell: {
     type: String,
     required: [ true, 'Enter cell of your house' ],
-  },
-  // 13
-  fullName: {
-    type: String,
-    required: true,
-  },
-  // 14
-  phone: {
-    type: String,
-    required: true,
-  },
-  // 15
-  email: {
-    type: String,
-    required: true,
   },
   // 16
   postedDate: {
