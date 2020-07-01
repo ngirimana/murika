@@ -1,7 +1,7 @@
 import lodash from 'lodash';
 import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
-import crypto from 'crypto';
+import crypto, { verify } from 'crypto';
 import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
 import { generateAuthToken, userIdFromToken } from '../helpers/token';
@@ -203,5 +203,20 @@ export const allUser = async (req, res) => {
     }
   } catch (error) {
     return errorResponse(res, 500, error);
+  }
+};
+
+
+export const verifyUser = async (req, res) => {
+  try {
+    const {mailToken} = req.params;
+    console.log(typeof mailToken)
+    const user = await User.find({ emailToken: mailToken.toString() });
+    if (user.length) {
+      console.log(mailToken, '===========================', user);
+    }
+  } catch (error) {
+    console.log(error);
+    console.log(typeof mailToken)
   }
 };

@@ -6,7 +6,7 @@ import {
   viewProfile,
   deleteUser,
   allUser,
-
+  verifyUser,
 } from '../controllers/userContoller';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
@@ -18,7 +18,7 @@ userRouter.post('/signup', signUp);
 userRouter.post('/signin', verifyIsVerified, signIn);
 userRouter.get('/viewProfile/', verifyAuth, viewProfile);
 userRouter.patch('/profile/changePassword', verifyAuth, changePassword);
-// userRouter.get('/verify-email/:mailToken', verifyUser);
+userRouter.get('/emailverification/:mailToken', verifyUser);
 userRouter.get('/users/', verifyIsAdmin, allUser);
 userRouter.delete('/users/:searchId', verifyIsAdmin, deleteUser);
 
