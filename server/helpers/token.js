@@ -3,16 +3,17 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const generateAuthToken = (id, isadmin, email, firstname, lastname, phone) => {
-  const token = jwt.sign({
-    Id: id,
-    isAdmin: isadmin,
-    userEmail: email,
-    firstName: firstname,
-    lastName: lastname,
-    phone,
-  },
-  process.env.SECRETEKEY, { expiresIn: '5h' });
+export const generateAuthToken = (id, isadmin, email, isverified) => {
+  const token = jwt.sign(
+    {
+      Id: id,
+      isAdmin: isadmin,
+      userEmail: email,
+      isVerified: isverified,
+    },
+    process.env.SECRETEKEY,
+    { expiresIn: '5h' },
+  );
   return token;
 };
 export const userIdFromToken = (token) => {
