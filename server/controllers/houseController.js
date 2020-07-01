@@ -1,3 +1,4 @@
+import { parseInt } from 'lodash';
 import { errorResponse, successResponse } from '../helpers/response';
 import House from '../models/houseModel';
 import { userIdFromToken, isAdminFromToken } from '../helpers/token';
@@ -121,15 +122,14 @@ export const rentHouse = async (req, res) => {
 export const searchHouse = async (req, res) => {
   try {
     const { searchParameter } = req.params;
+    const regx = new RegExp(searchParameter, 'i');
+    // const searchResult = await House.find({ $text: { $search: `${searchParameter} ` } },
     const searchResult = await House.find({
-      $or: [
-        { category: { $regex: `.* ${searchParameter}.*` } },
-        { 'address.district': { $regex: `.*${searchParameter}.*` } },
-        { 'address.sector': { $regex: `.*${searchParameter}.*` } },
-        { 'address.cell': { $regex: `.*${searchParameter}.*` } },
-
-      ],
-    }, { __v: 0 });
+      $or: [ { district: regx }, { sector: regx }, { cell: regx },
+        { propertyType: regx }, { priceStatus: regx },
+        { monthlyRent: { $lte: parseInt(searchParameter) } } ],
+    },
+    { __v: 0 });
     if (searchResult.length) {
       const sortedSearchedHouse = searchResult.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));

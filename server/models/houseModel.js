@@ -100,6 +100,12 @@ const houseSchema = new mongoose.Schema({
     required: true,
   },
 });
+houseSchema.index({
+  district: 'text', sector: 'text', cell: 'text', propertyType: 'text', priceStatus: 'text',
+});
+// houseSchema.index({ sector: 'text' });
+// { sector: 'text' }, { cell: 'text' }, { propertyType: 'text' }, { priceStatus: 'text' }
 const houseModel = mongoose.model('House', houseSchema);
+
 
 export default houseModel;
