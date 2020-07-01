@@ -123,13 +123,12 @@ export const searchHouse = async (req, res) => {
   try {
     const { searchParameter } = req.params;
     const regx = new RegExp(searchParameter, 'i');
-    // const searchResult = await House.find({ $text: { $search: `${searchParameter} ` } },
     const searchResult = await House.find({
       $or: [ { district: regx }, { sector: regx }, { cell: regx },
         { propertyType: regx }, { priceStatus: regx },
         { monthlyRent: { $lte: parseInt(searchParameter) } } ],
     },
-    { __v: 0 });
+    { __v: 0 }).populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
     if (searchResult.length) {
       const sortedSearchedHouse = searchResult.sort((a, b) => (new Date(b.postedDate)).getTime()
         - (new Date(a.postedDate).getTime()));
