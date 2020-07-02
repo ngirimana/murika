@@ -1,9 +1,11 @@
 import lodash from 'lodash';
+import crypto from 'crypto';
 import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
 import { generateAuthToken, userIdFromToken } from '../helpers/token';
 import User from '../models/userModel';
 import House from '../models/houseModel';
+import { sendEmails } from '../helpers/sendEmail';
 
 export const signUp = async (req, res) => {
   try {
@@ -13,27 +15,26 @@ export const signUp = async (req, res) => {
       phoneNumber,
       email,
       password,
-      isAdmin,
       userType,
+      emailToken,
     } = req.body;
     password = encryptPassword(password);
+    emailToken = crypto.randomBytes(64).toString('hex');
+    const existUser = await User.find({ email, phoneNumber });
+    if (existUser.length) {
+      return errorResponse(res, 409, 'Email or phone number has been used');
+    }
     const newUser = await User.create({
       firstName,
       lastName,
       phoneNumber,
       email,
       password,
-      isAdmin,
+      isAdmin: false,
       userType,
+      emailToken,
+      isVerfied: false,
     });
-    const token = generateAuthToken(
-      newUser._id,
-      newUser.isAdmin,
-      newUser.email,
-      newUser.firstName,
-      newUser.lastName,
-      newUser.phoneNumber,
-    );
     const data = lodash.pick(
       newUser,
       'id',
@@ -43,11 +44,14 @@ export const signUp = async (req, res) => {
       'phoneNumber',
       'isAdmin',
       'userType',
+      'emailToken',
+      'isVerfied',
     );
+    const url = req.headers.host;
+    await sendEmails(newUser.email, newUser.firstName, newUser.emailToken, url);
     return res.status(201).json({
       status: 201,
       message: 'User created successfully',
-      token,
       data,
     });
   } catch (error) {
@@ -57,17 +61,15 @@ export const signUp = async (req, res) => {
 export const signIn = async (req, res) => {
   try {
     const { userName, password } = req.body;
-    const userLogin = await User.findOne(
-      { $or: [ { email: userName }, { phoneNumber: userName } ] },
-    );
+    const userLogin = await User.findOne({
+      $or: [{ email: userName }, { phoneNumber: userName }],
+    });
     if (userLogin && decryptPassword(password, userLogin.password)) {
       const token = generateAuthToken(
         userLogin._id,
         userLogin.isAdmin,
         userLogin.email,
-        userLogin.firstName,
-        userLogin.lastName,
-        userLogin.phoneNumber,
+        userLogin.isVerfied,
       );
       const data = lodash.pick(
         userLogin,
@@ -79,6 +81,8 @@ export const signIn = async (req, res) => {
         'email',
         'isAdmin',
         'userType',
+        'emailToken',
+        'isVerfied',
       );
       return res.status(200).json({
         status: 200,
@@ -97,12 +101,20 @@ export const changePassword = async (req, res) => {
     const { oldPassword, newPassword, confirmPass } = req.body;
     const userId = userIdFromToken(req.header('Authorization'));
     const user = await User.findById(userId);
-    if ((newPassword === confirmPass) && (decryptPassword(oldPassword, user.password))) {
+    if (
+      newPassword === confirmPass
+      && decryptPassword(oldPassword, user.password)
+    ) {
       const hashed = encryptPassword(newPassword);
-      const newUser = await User.updateOne({ _id: userId },
-        { $set: { password: hashed } });
+      const newUser = await User.updateOne(
+        { _id: userId },
+        { $set: { password: hashed } },
+      );
       return successResponse(
-        res, 200, 'password changed successfully', newUser,
+        res,
+        200,
+        'password changed successfully',
+        newUser,
       );
     }
     return errorResponse(res, 400, 'Incorrect oldPassword');
@@ -113,8 +125,10 @@ export const changePassword = async (req, res) => {
 export const viewProfile = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('Authorization'));
-    const userProfile = await User.find({ _id: userId },
-      { password: 0, __v: 0, _id: 0 });
+    const userProfile = await User.find(
+      { _id: userId },
+      { password: 0, __v: 0, _id: 0 },
+    );
     if (userProfile.length) {
       const myHouses = await House.find({ ownerId: userId }, { __v: 0 });
       if (myHouses.length) {
@@ -124,10 +138,13 @@ export const viewProfile = async (req, res) => {
           myHouses,
         };
         return successResponse(
-          res, 200, 'User profile retrieved successfully', data,
+          res,
+          200,
+          'User profile retrieved successfully',
+          data,
         );
       }
-      return errorResponse(res, 404, 'You don\'t have House');
+      return errorResponse(res, 404, "You don't have House");
     }
     return errorResponse(res, 404, 'User Profile is not available');
   } catch (error) {
@@ -141,7 +158,12 @@ export const deleteUser = async (req, res) => {
 
     if (user) {
       const userToDelete = await User.deleteOne({ _id: searchId });
-      return successResponse(res, 200, 'User deleted successfully', userToDelete);
+      return successResponse(
+        res,
+        200,
+        'User deleted successfully',
+        userToDelete,
+      );
     }
     return errorResponse(res, 404, 'User is not found');
   } catch (error) {
@@ -154,6 +176,30 @@ export const allUser = async (req, res) => {
     if (users) {
       return successResponse(res, 200, 'users are found', users);
     }
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+
+export const verifyUser = async (req, res) => {
+  try {
+    const { mailToken } = req.params;
+
+    const user = await User.find({ emailToken: mailToken.toString() });
+    if (user.length) {
+      const verifiedUser = await User.updateOne(
+        { emailToken: mailToken.toString() },
+        { emailToken: '', isVerified: true },
+      );
+
+      return successResponse(
+        res,
+        200,
+        'User verified successfully',
+        verifiedUser,
+      );
+    }
+    return errorResponse(res, 404, "User with this email token doesn't exist");
   } catch (error) {
     return errorResponse(res, 500, error);
   }
