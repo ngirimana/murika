@@ -1,14 +1,11 @@
 import lodash from 'lodash';
-import sgMail from '@sendgrid/mail';
-import dotenv from 'dotenv';
-import crypto, { verify } from 'crypto';
+import crypto from 'crypto';
 import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
 import { generateAuthToken, userIdFromToken } from '../helpers/token';
 import User from '../models/userModel';
 import House from '../models/houseModel';
-
-dotenv.config();
+import { sendEmails } from '../helpers/sendEmail';
 
 export const signUp = async (req, res) => {
   try {
@@ -50,30 +47,8 @@ export const signUp = async (req, res) => {
       'emailToken',
       'isVerfied',
     );
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    const msg = {
-      to: 'ngirimanaschadrack@gmail.com',
-      from: process.env.FROM, // Use the email address or domain you verified above
-      subject: 'Verify Your Email Address',
-      text: `Hello ${newUser.firstName}, thank you for registering on our site.
-      Please copy link address below and paste in your browser to verify your account.
-      http://${req.headers.host}/verify?token=${newUser.emailToken}`,
-      html: `
-      <h1>Hello ${newUser.firstName} </h1>
-      <p>thank you for registering on our site.</p>
-      <p>Please copy link address below and paste in your browser to verify your account.</p>
-      <a href="http://${req.headers.host}/api/v1/auth/verify-email/${newUser.emailToken}"> Verify Your Account</a>
-      `,
-    };
-    try {
-      await sgMail.send(msg);
-    } catch (error) {
-      process.stdout.write(error);
-
-      if (error.response) {
-        process.stdout.write(error.response.body);
-      }
-    }
+    const url = req.headers.host;
+    await sendEmails(newUser.email, newUser.firstName, newUser.emailToken, url);
     return res.status(201).json({
       status: 201,
       message: 'User created successfully',
@@ -206,17 +181,26 @@ export const allUser = async (req, res) => {
   }
 };
 
-
 export const verifyUser = async (req, res) => {
   try {
-    const {mailToken} = req.params;
-    console.log(typeof mailToken)
+    const { mailToken } = req.params;
+
     const user = await User.find({ emailToken: mailToken.toString() });
     if (user.length) {
-      console.log(mailToken, '===========================', user);
+      const verifiedUser = await User.updateOne(
+        { emailToken: mailToken.toString() },
+        { emailToken: '', isVerified: true },
+      );
+
+      return successResponse(
+        res,
+        200,
+        'User verified successfully',
+        verifiedUser,
+      );
     }
+    return errorResponse(res, 404, "User with this email token doesn't exist");
   } catch (error) {
-    console.log(error);
-    console.log(typeof mailToken)
+    return errorResponse(res, 500, error);
   }
 };
