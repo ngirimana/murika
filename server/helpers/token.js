@@ -16,6 +16,17 @@ export const generateAuthToken = (id, isadmin, email, isverified) => {
   );
   return token;
 };
+export const generateForgotToken = (id) => {
+  const forgotToken = jwt.sign(
+    {
+      Id: id,
+    },
+    process.env.FORGOT_PASSWORD_KEY,
+    { expiresIn: '30m' },
+  );
+  return forgotToken;
+};
+
 export const userIdFromToken = (token) => {
   const mytoken = jwt.verify(token, process.env.SECRETEKEY);
   return mytoken.Id;

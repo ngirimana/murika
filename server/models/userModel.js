@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  resetToken: {
+    type: String,
+    default: '',
+  },
 });
 const UserModel = mongoose.model('User', userSchema);
 

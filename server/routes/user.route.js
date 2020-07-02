@@ -7,18 +7,20 @@ import {
   deleteUser,
   allUser,
   verifyUser,
+  forgotPassward,
 } from '../controllers/userContoller';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
-import { verifyIsVerified } from '../middlewares/checkIsVerified';
+import { verifiedUser } from '../middlewares/checkIsVerified';
 
 const userRouter = express.Router();
 
 userRouter.post('/signup', signUp);
-userRouter.post('/signin', verifyIsVerified, signIn);
+userRouter.post('/signin', verifiedUser, signIn);
 userRouter.get('/viewProfile/', verifyAuth, viewProfile);
 userRouter.patch('/profile/changePassword', verifyAuth, changePassword);
-userRouter.get('/emailverification/:mailToken', verifyUser);
+userRouter.patch('/emailverification/:mailToken', verifyUser);
+userRouter.patch('/forgot-password', forgotPassward);
 userRouter.get('/users/', verifyIsAdmin, allUser);
 userRouter.delete('/users/:searchId', verifyIsAdmin, deleteUser);
 

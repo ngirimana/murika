@@ -2,13 +2,13 @@ import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 
 dotenv.config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 export const sendEmails = async (
   receiverEmail,
   receiverName,
   receiverEmailToken,
   currentUrl,
 ) => {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
   const msg = {
     to: `${receiverEmail.toString()}`,
     from: process.env.FROM, // Use the email address or domain you verified above
@@ -28,6 +28,30 @@ export const sendEmails = async (
   } catch (error) {
     process.stdout.write(error);
 
+    if (error.response) {
+      process.stdout.write(error.response.body);
+    }
+  }
+};
+
+export const forgotPasswordEmails = async (email, name, token, url) => {
+  const data = {
+    to: `${email.toString()}`,
+    from: process.env.FROM, // Use the email address or domain you verified abov
+    subject: 'Forgot Password Link',
+    text: `Hello ${name} ,.
+     Please copy link below and paste in your browser to rest your password.
+      http://${url}/api/v1/auth/forgot-password/${token}`,
+    html: `
+      <p>Hello ${name}.</p>
+      <p>Please click on the link below  in your browser to reset your password.</p>
+      <a href="http://${url}/api/v1/auth/forgot-password/${token}"> Reset Your Password</a>
+      `,
+  };
+  try {
+    await sgMail.send(data);
+  } catch (error) {
+    process.stdout.write(error);
     if (error.response) {
       process.stdout.write(error.response.body);
     }

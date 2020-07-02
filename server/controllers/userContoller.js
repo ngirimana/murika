@@ -1,11 +1,20 @@
 import lodash from 'lodash';
 import crypto from 'crypto';
+import sgMail from '@sendgrid/mail';
+import dotenv from 'dotenv';
 import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
-import { generateAuthToken, userIdFromToken } from '../helpers/token';
+import {
+  generateAuthToken,
+  generateForgotToken,
+  userIdFromToken,
+} from '../helpers/token';
 import User from '../models/userModel';
 import House from '../models/houseModel';
-import { sendEmails } from '../helpers/sendEmail';
+import { sendEmails, forgotPasswordEmails } from '../helpers/sendEmail';
+
+dotenv.config();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const signUp = async (req, res) => {
   try {
@@ -33,7 +42,8 @@ export const signUp = async (req, res) => {
       isAdmin: false,
       userType,
       emailToken,
-      isVerfied: false,
+      isVerified: false,
+      resetToken: '',
     });
     const data = lodash.pick(
       newUser,
@@ -45,7 +55,8 @@ export const signUp = async (req, res) => {
       'isAdmin',
       'userType',
       'emailToken',
-      'isVerfied',
+      'isVerified',
+      'resetToken',
     );
     const url = req.headers.host;
     await sendEmails(newUser.email, newUser.firstName, newUser.emailToken, url);
@@ -69,7 +80,7 @@ export const signIn = async (req, res) => {
         userLogin._id,
         userLogin.isAdmin,
         userLogin.email,
-        userLogin.isVerfied,
+        userLogin.isVerified,
       );
       const data = lodash.pick(
         userLogin,
@@ -82,7 +93,9 @@ export const signIn = async (req, res) => {
         'isAdmin',
         'userType',
         'emailToken',
-        'isVerfied',
+        'resetToken',
+        'isVerified',
+        'resetToken',
       );
       return res.status(200).json({
         status: 200,
@@ -184,14 +197,12 @@ export const allUser = async (req, res) => {
 export const verifyUser = async (req, res) => {
   try {
     const { mailToken } = req.params;
-
     const user = await User.find({ emailToken: mailToken.toString() });
     if (user.length) {
       const verifiedUser = await User.updateOne(
         { emailToken: mailToken.toString() },
         { emailToken: '', isVerified: true },
       );
-
       return successResponse(
         res,
         200,
@@ -200,6 +211,29 @@ export const verifyUser = async (req, res) => {
       );
     }
     return errorResponse(res, 404, "User with this email token doesn't exist");
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const forgotPassward = async (req, res) => {
+  try {
+    const { userEmail } = req.body;
+    const url = req.headers.host;
+    const user = await User.find({ email: userEmail });
+    if (user.length) {
+      const token = generateForgotToken(user[0]._id);
+      const updatedUser = await User.updateOne(
+        { email: userEmail },
+        { resetToken: token },
+      );
+      await forgotPasswordEmails(user[0].email, user[0].firstName, token, url);
+      return successResponse(res, 200, 'Check your email box to rest password', updatedUser);
+    }
+    return errorResponse(
+      res,
+      404,
+      'User assocciated with this email is not found',
+    );
   } catch (error) {
     return errorResponse(res, 500, error);
   }
