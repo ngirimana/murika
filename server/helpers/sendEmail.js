@@ -41,11 +41,11 @@ export const forgotPasswordEmails = async (email, name, token, url) => {
     subject: 'Forgot Password Link',
     text: `Hello ${name} ,.
      Please copy link below and paste in your browser to rest your password.
-      http://${url}/api/v1/auth/forgot-password/${token}`,
+      http://${url}/api/v1/auth/reset-password/${token}`,
     html: `
       <p>Hello ${name}.</p>
       <p>Please click on the link below  in your browser to reset your password.</p>
-      <a href="http://${url}/api/v1/auth/forgot-password/${token}"> Reset Your Password</a>
+      <a href="http://${url}/api/v1/auth/reset-password/${token}"> Reset Your Password</a>
       `,
   };
   try {

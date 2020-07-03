@@ -1,6 +1,5 @@
 import lodash from 'lodash';
 import crypto from 'crypto';
-import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 import { encryptPassword, decryptPassword } from '../helpers/hashPassword';
 import { errorResponse, successResponse } from '../helpers/response';
@@ -8,13 +7,13 @@ import {
   generateAuthToken,
   generateForgotToken,
   userIdFromToken,
+  userReesetId,
 } from '../helpers/token';
 import User from '../models/userModel';
 import House from '../models/houseModel';
 import { sendEmails, forgotPasswordEmails } from '../helpers/sendEmail';
 
 dotenv.config();
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const signUp = async (req, res) => {
   try {
@@ -234,6 +233,26 @@ export const forgotPassward = async (req, res) => {
       404,
       'User assocciated with this email is not found',
     );
+  } catch (error) {
+    return errorResponse(res, 500, error);
+  }
+};
+export const resetPassword = async (req, res) => {
+  const { resetToken } = req.params;
+  const { newPass } = req.body;
+  try {
+    if (resetToken) {
+      if (userReesetId(resetToken)) {
+        const user = await User.find({ resetToken: resetToken.toString() });
+        if (user.length) {
+          const newUserData = await User.updateOne({ resetToken: resetToken.toString() }, { password: encryptPassword(newPass), resetToken: '' });
+          return successResponse(res, 200, 'Password has been Changed Successfully', newUserData);
+        }
+        return errorResponse(res, 404, 'User with this token is not found');
+      }
+      return errorResponse(res, 401, 'Incorrect token or it\'s been expired');
+    }
+    return errorResponse(res, 400, 'Token\'s not been provided');
   } catch (error) {
     return errorResponse(res, 500, error);
   }

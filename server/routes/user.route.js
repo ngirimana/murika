@@ -8,6 +8,7 @@ import {
   allUser,
   verifyUser,
   forgotPassward,
+  resetPassword,
 } from '../controllers/userContoller';
 import { verifyAuth } from '../middlewares/authentication';
 import { verifyIsAdmin } from '../middlewares/checkIsAdmin';
@@ -21,6 +22,7 @@ userRouter.get('/viewProfile/', verifyAuth, viewProfile);
 userRouter.patch('/profile/changePassword', verifyAuth, changePassword);
 userRouter.patch('/emailverification/:mailToken', verifyUser);
 userRouter.patch('/forgot-password', forgotPassward);
+userRouter.patch('/reset-password/:resetToken', resetPassword);
 userRouter.get('/users/', verifyIsAdmin, allUser);
 userRouter.delete('/users/:searchId', verifyIsAdmin, deleteUser);
 
