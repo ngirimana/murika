@@ -1,7 +1,7 @@
 import User from '../models/userModel';
 import { errorResponse } from '../helpers/response';
 
-export const verifyIsVerified = async (req, res, next) => {
+export const verifiedUser = async (req, res, next) => {
   try {
     const { userName } = req.body;
     const user = await User.findOne({
