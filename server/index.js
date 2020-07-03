@@ -32,5 +32,7 @@ app.use('/', (req, res) => {
 });
 
 const { port } = Config;
-app.listen(port, () => process.stdout.write(`Listening on port ${port} ...\n********************* \n`));
+app.listen(port, () => process.stdout.write(
+  `Listening on port ${port} ...\n********************* \n`,
+));
 export default app;
