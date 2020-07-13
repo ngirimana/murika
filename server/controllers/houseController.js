@@ -211,7 +211,7 @@ export const getRentedHouse = async (req, res) => {
       return successResponse(
         res,
         200,
-        'House retrieved successfull',
+        'House retrieved successfully',
         oneRentedHouse,
       );
     }
