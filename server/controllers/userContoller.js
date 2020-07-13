@@ -198,16 +198,14 @@ export const verifyUser = async (req, res) => {
     const { mailToken } = req.params;
     const user = await User.find({ emailToken: mailToken.toString() });
     if (user.length) {
-      const verifiedUser = await User.updateOne(
+      await User.updateOne(
         { emailToken: mailToken.toString() },
         { emailToken: '', isVerified: true },
       );
-      return successResponse(
-        res,
-        200,
-        'User verified successfully',
-        verifiedUser,
-      );
+      return res.status(200).json({
+        ' message': 'User verified successfully',
+
+      });
     }
     return errorResponse(res, 404, "User with this email token doesn't exist");
   } catch (error) {
