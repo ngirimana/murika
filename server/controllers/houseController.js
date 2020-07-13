@@ -68,7 +68,12 @@ export const editHouse = async (req, res) => {
         new: true,
         runValidators: true,
       });
-      return successResponse(res, 200, 'House edited successfully', updatedHouse);
+      return successResponse(
+        res,
+        200,
+        'House edited successfully',
+        updatedHouse,
+      );
     }
     return errorResponse(res, 403, "This house post doesn't belong to you");
   } catch (err) {
@@ -76,15 +81,22 @@ export const editHouse = async (req, res) => {
   }
 };
 
-
 export const findAllHouse = async (req, res) => {
   try {
-    const houses = await House.find({ status: 'available' }, { __v: 0 })
-      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const houses = await House.find(
+      { status: 'available' },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (houses.length) {
-      const sortedHouse = houses.sort((a, b) => (new Date(b.postedDate)).getTime()
-        - (new Date(a.postedDate).getTime()));
-      return successResponse(res, 200, 'Houses retrieved successfully', sortedHouse);
+      const sortedHouse = houses.sort(
+        (a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime(),
+      );
+      return successResponse(
+        res,
+        200,
+        'Houses retrieved successfully',
+        sortedHouse,
+      );
     }
     return errorResponse(res, 404, 'House are not available');
   } catch (error) {
@@ -94,10 +106,17 @@ export const findAllHouse = async (req, res) => {
 export const findOneHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneHouse = await House.findById({ _id: houseId, status: 'available' }, { __v: 0 })
-      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const oneHouse = await House.findById(
+      { _id: houseId, status: 'available' },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (oneHouse) {
-      return successResponse(res, 200, 'House retrievved successfull', oneHouse);
+      return successResponse(
+        res,
+        200,
+        'House retrievved successfull',
+        oneHouse,
+      );
     }
 
     return errorResponse(res, 404, 'House is not available');
@@ -109,10 +128,21 @@ export const rentHouse = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('Authorization'));
     const { houseId } = req.params;
-    const SingleHouse = await House.findOne({ _id: houseId, status: 'available' });
-    if (SingleHouse && (SingleHouse.ownerId !== userId)) {
-      const rentedHouse = await House.updateOne({ _id: houseId }, { status: 'rented', renterId: userId });
-      return successResponse(res, 200, 'House is rented successfully', rentedHouse);
+    const SingleHouse = await House.findOne({
+      _id: houseId,
+      status: 'available',
+    });
+    if (SingleHouse && SingleHouse.ownerId !== userId) {
+      const rentedHouse = await House.updateOne(
+        { _id: houseId },
+        { status: 'rented', renterId: userId },
+      );
+      return successResponse(
+        res,
+        200,
+        'House is rented successfully',
+        rentedHouse,
+      );
     }
     return errorResponse(res, 404, 'House is not available');
   } catch (error) {
@@ -123,15 +153,22 @@ export const searchHouse = async (req, res) => {
   try {
     const { searchParameter } = req.params;
     const regx = new RegExp(searchParameter, 'i');
-    const searchResult = await House.find({
-      $or: [ { district: regx }, { sector: regx }, { cell: regx },
-        { propertyType: regx }, { priceStatus: regx },
-        { monthlyRent: { $lte: parseInt(searchParameter) } } ],
-    },
-    { __v: 0 }).populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const searchResult = await House.find(
+      {
+        $or: [
+          { district: regx },
+          { sector: regx },
+          { cell: regx },
+          { propertyType: regx },
+          { priceStatus: regx },
+        ],
+      },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (searchResult.length) {
-      const sortedSearchedHouse = searchResult.sort((a, b) => (new Date(b.postedDate)).getTime()
-        - (new Date(a.postedDate).getTime()));
+      const sortedSearchedHouse = searchResult.sort(
+        (a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime(),
+      );
       const data = {
         numberOfHouse: sortedSearchedHouse.length,
         sortedSearchedHouse,
@@ -145,10 +182,17 @@ export const searchHouse = async (req, res) => {
 };
 export const getAllRentedHouse = async (req, res) => {
   try {
-    const rentedHouse = await House.find({ status: 'rented' }, { __v: 0 })
-      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const rentedHouse = await House.find(
+      { status: 'rented' },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (rentedHouse) {
-      return successResponse(res, 200, 'House retrievved successfull', rentedHouse);
+      return successResponse(
+        res,
+        200,
+        'House retrievved successfull',
+        rentedHouse,
+      );
     }
 
     return errorResponse(res, 404, 'House is not available');
@@ -159,10 +203,17 @@ export const getAllRentedHouse = async (req, res) => {
 export const getRentedHouse = async (req, res) => {
   try {
     const { houseId } = req.params;
-    const oneRentedHouse = await House.findOne({ _id: houseId, status: 'rented' }, { __v: 0 })
-      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const oneRentedHouse = await House.findOne(
+      { _id: houseId, status: 'rented' },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (oneRentedHouse) {
-      return successResponse(res, 200, 'House retrieved successfull', oneRentedHouse);
+      return successResponse(
+        res,
+        200,
+        'House retrieved successfully',
+        oneRentedHouse,
+      );
     }
 
     return errorResponse(res, 404, 'House is not available');
@@ -177,9 +228,14 @@ export const deleteOneHouse = async (req, res) => {
     const isAdmin = isAdminFromToken(req.header('Authorization'));
     const { houseId } = req.params;
     const deletableHouse = await House.findById(houseId);
-    if ((deletableHouse.ownerId === userId) || isAdmin) {
+    if (deletableHouse.ownerId === userId || isAdmin) {
       const deletedHouse = await House.deleteOne({ _id: houseId });
-      return successResponse(res, 200, 'House deleted successfully', deletedHouse);
+      return successResponse(
+        res,
+        200,
+        'House deleted successfully',
+        deletedHouse,
+      );
     }
     return errorResponse(res, 403, "This house post doesn't belong to you");
   } catch (err) {
@@ -189,12 +245,23 @@ export const deleteOneHouse = async (req, res) => {
 export const HouseIRented = async (req, res) => {
   try {
     const userId = userIdFromToken(req.header('Authorization'));
-    const myRentedHouses = await House.find({ renterId: userId, status: 'rented' }, { __v: 0 })
-      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const myRentedHouses = await House.find(
+      { renterId: userId, status: 'rented' },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (myRentedHouses.length) {
-      return successResponse(res, 200, 'House that you have rented are available', myRentedHouses);
+      return successResponse(
+        res,
+        200,
+        'House that you have rented are available',
+        myRentedHouses,
+      );
     }
-    return errorResponse(res, 404, 'House that you have rented are not available');
+    return errorResponse(
+      res,
+      404,
+      'House that you have rented are not available',
+    );
   } catch (err) {
     return errorResponse(res, 500, err);
   }
@@ -204,10 +271,17 @@ export const activateHouse = async (req, res) => {
     const { houseId } = req.params;
     const userId = userIdFromToken(req.header('Authorization'));
     const house = await House.findOne({ _id: houseId, status: 'rented' });
-    if (house && (house.ownerId === userId)) {
-      const acttivatedHouse = await House.updateOne({ _id: houseId },
-        { status: 'available', renterId: null });
-      return successResponse(res, 200, 'House is activated successfully', acttivatedHouse);
+    if (house && house.ownerId === userId) {
+      const acttivatedHouse = await House.updateOne(
+        { _id: houseId },
+        { status: 'available', renterId: null },
+      );
+      return successResponse(
+        res,
+        200,
+        'House is activated successfully',
+        acttivatedHouse,
+      );
     }
     return errorResponse(res, 404, 'House is not found');
   } catch (error) {
@@ -217,12 +291,20 @@ export const activateHouse = async (req, res) => {
 
 export const cheapHouse = async (req, res) => {
   try {
-    const cheapHouses = await House.find({ status: 'available', monthlyRent: { $lte: 50000 } }, { __v: 0 })
-      .populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const cheapHouses = await House.find(
+      { status: 'available', monthlyRent: { $lte: 50000 } },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (cheapHouse.length) {
-      const sortedCheapHouse = cheapHouses.sort((a, b) => (new Date(b.postedDate)).getTime()
-        - (new Date(a.postedDate).getTime()));
-      return successResponse(res, 200, 'Cheap House Retrieved Successfully', sortedCheapHouse);
+      const sortedCheapHouse = cheapHouses.sort(
+        (a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime(),
+      );
+      return successResponse(
+        res,
+        200,
+        'Cheap House Retrieved Successfully',
+        sortedCheapHouse,
+      );
     }
   } catch (error) {
     return errorResponse(res, 500, error);
@@ -230,17 +312,26 @@ export const cheapHouse = async (req, res) => {
 };
 export const mediumHouse = async (req, res) => {
   try {
-    const mediumHouses = await House.find({
-      $and:
-        [ { monthlyRent: { $gt: 50000 } },
-          { monthlyRent: { $lte: 150000 } } ],
-      status: 'available',
-    },
-    { __v: 0 }).populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const mediumHouses = await House.find(
+      {
+        $and: [
+          { monthlyRent: { $gt: 50000 } },
+          { monthlyRent: { $lte: 150000 } },
+        ],
+        status: 'available',
+      },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (mediumHouse.length) {
-      const sortedMediumHouse = mediumHouses.sort((a, b) => (new Date(b.postedDate)).getTime()
-        - (new Date(a.postedDate).getTime()));
-      return successResponse(res, 200, 'Medium House Retrieved Successfully', sortedMediumHouse);
+      const sortedMediumHouse = mediumHouses.sort(
+        (a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime(),
+      );
+      return successResponse(
+        res,
+        200,
+        'Medium House Retrieved Successfully',
+        sortedMediumHouse,
+      );
     }
   } catch (error) {
     return errorResponse(res, 500, error);
@@ -249,15 +340,23 @@ export const mediumHouse = async (req, res) => {
 
 export const highLevelHouse = async (req, res) => {
   try {
-    const highLevelHouses = await House.find({
-      monthlyRent: { $gt: 150000 },
-      status: 'available',
-    },
-    { __v: 0 }).populate('ownerId', [ 'firstName', 'lastName', 'email', 'phoneNumber' ]);
+    const highLevelHouses = await House.find(
+      {
+        monthlyRent: { $gt: 150000 },
+        status: 'available',
+      },
+      { __v: 0 },
+    ).populate('ownerId', ['firstName', 'lastName', 'email', 'phoneNumber']);
     if (highLevelHouse.length) {
-      const sortedHighLevelHouse = highLevelHouses.sort((a, b) => (new Date(b.postedDate)).getTime()
-        - (new Date(a.postedDate).getTime()));
-      return successResponse(res, 200, 'Medium House Retrieved Successfully', sortedHighLevelHouse);
+      const sortedHighLevelHouse = highLevelHouses.sort(
+        (a, b) => new Date(b.postedDate).getTime() - new Date(a.postedDate).getTime(),
+      );
+      return successResponse(
+        res,
+        200,
+        'Medium House Retrieved Successfully',
+        sortedHighLevelHouse,
+      );
     }
   } catch (error) {
     return errorResponse(res, 500, error);

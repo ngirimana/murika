@@ -20,7 +20,7 @@ userRouter.post('/signup', signUp);
 userRouter.post('/signin', verifiedUser, signIn);
 userRouter.get('/viewProfile/', verifyAuth, viewProfile);
 userRouter.patch('/profile/changePassword', verifyAuth, changePassword);
-userRouter.patch('/emailverification/:mailToken', verifyUser);
+userRouter.get('/emailverification/:mailToken', verifyUser);
 userRouter.patch('/forgot-password', forgotPassward);
 userRouter.patch('/reset-password/:resetToken', resetPassword);
 userRouter.get('/users/', verifyIsAdmin, allUser);
