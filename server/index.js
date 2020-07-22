@@ -9,7 +9,7 @@ import houseRoute from './routes/house.route';
 
 const app = express();
 
-dotenv.config({ path: './.env' });
+dotenv.config({ path: '../.env' });
 
 mongoose
   .connect(process.env.DATABASE, {
