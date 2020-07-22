@@ -65,7 +65,7 @@ export const signUp = async (req, res) => {
       data,
     });
   } catch (error) {
-    return errorResponse(res, 400, `${error}---------=============`);
+    return errorResponse(res, 400, error);
   }
 };
 export const signIn = async (req, res) => {
@@ -204,7 +204,6 @@ export const verifyUser = async (req, res) => {
       );
       return res.status(200).json({
         ' message': 'User verified successfully',
-
       });
     }
     return errorResponse(res, 404, "User with this email token doesn't exist");
@@ -224,7 +223,12 @@ export const forgotPassward = async (req, res) => {
         { resetToken: token },
       );
       await forgotPasswordEmails(user[0].email, user[0].firstName, token, url);
-      return successResponse(res, 200, 'Check your email box to rest password', updatedUser);
+      return successResponse(
+        res,
+        200,
+        'Check your email box to rest password',
+        updatedUser,
+      );
     }
     return errorResponse(
       res,
@@ -243,14 +247,22 @@ export const resetPassword = async (req, res) => {
       if (userReesetId(resetToken)) {
         const user = await User.find({ resetToken: resetToken.toString() });
         if (user.length) {
-          const newUserData = await User.updateOne({ resetToken: resetToken.toString() }, { password: encryptPassword(newPass), resetToken: '' });
-          return successResponse(res, 200, 'Password has been Changed Successfully', newUserData);
+          const newUserData = await User.updateOne(
+            { resetToken: resetToken.toString() },
+            { password: encryptPassword(newPass), resetToken: '' },
+          );
+          return successResponse(
+            res,
+            200,
+            'Password has been Changed Successfully',
+            newUserData,
+          );
         }
         return errorResponse(res, 404, 'User with this token is not found');
       }
-      return errorResponse(res, 401, 'Incorrect token or it\'s been expired');
+      return errorResponse(res, 401, "Incorrect token or it's been expired");
     }
-    return errorResponse(res, 400, 'Token\'s not been provided');
+    return errorResponse(res, 400, "Token's not been provided");
   } catch (error) {
     return errorResponse(res, 500, error);
   }
