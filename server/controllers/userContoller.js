@@ -65,7 +65,7 @@ export const signUp = async (req, res) => {
       data,
     });
   } catch (error) {
-    return errorResponse(res, 400, error);
+    return errorResponse(res, 400, `${error}---------=============`);
   }
 };
 export const signIn = async (req, res) => {

@@ -12,7 +12,7 @@ const app = express();
 dotenv.config({ path: '../.env' });
 
 mongoose
-  .connect(process.env.DATABASE, {
+  .connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
