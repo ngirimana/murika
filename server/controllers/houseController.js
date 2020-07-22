@@ -1,4 +1,3 @@
-import { parseInt } from 'lodash';
 import { errorResponse, successResponse } from '../helpers/response';
 import House from '../models/houseModel';
 import { userIdFromToken, isAdminFromToken } from '../helpers/token';
